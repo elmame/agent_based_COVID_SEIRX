@@ -8,6 +8,7 @@ import bz2
 import _pickle as cPickle
 from os.path import join
 from random import shuffle
+import time
 
 import sys
 sys.path.insert(0,'school')
