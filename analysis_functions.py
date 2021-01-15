@@ -423,6 +423,7 @@ def compress_pickle(fname, fpath, data):
         try:
             with bz2.BZ2File(join(fpath, fname + '.pbz2'), 'w') as f: 
                 cPickle.dump(data, f)
+                success = True
         except OSError:
             time.sleep(0.5)
             print('re-trying to dump model file...')
