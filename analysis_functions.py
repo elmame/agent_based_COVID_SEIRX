@@ -427,7 +427,8 @@ def compress_pickle(fname, fpath, data):
                 success = True
         except OSError:
             time.sleep(0.5)
-            print('re-trying to dump model file...')
+            print('re-trying to dump model file {} ...'.format(fname))
+    return
     
     
 def decompress_pickle(fname, fpath):
