@@ -26,8 +26,8 @@ for trisk in 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2
 		done
 
 		echo "*********************"
-		echo run_data_creation.py $stype $N_runs $m_idx $trisk $src $dst
-		python run_data_creation.py $stype $N_runs $m_idx $trisk $src $dst &
+		echo run_data_creation_transmissibility.py $stype $N_runs $m_idx $trisk $src $dst
+		python run_data_creation_transmissibility.py $stype $N_runs $m_idx $trisk $src $dst &
 		echo "*********************"
 		sleep 1
 		
