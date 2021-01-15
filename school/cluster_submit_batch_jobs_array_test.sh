@@ -32,7 +32,7 @@ let m_range_end=$m_range_start+3
 
 for m_idx in $(seq $m_range_start $m_range_end)
 	do
-	for s_idx in $(seq 0 1)
+	for s_idx in $(seq 0 0)
 		do
 		running_tasks=`ps -C python --no-headers | wc -l`
 		
