@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH -J COVID_SEIRX_data_creation_array_primary
+#SBATCH -J COVID_SEIRX_data_creation_array_primary_dc
 #SBATCH -N 1         
 #SBATCH --array=0-71        
 #SBATCH --ntasks-per-core=2
@@ -17,7 +17,7 @@ conda activate covid
 
 
 N_runs=500
-stype=primary             
+stype=primary_dc             
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/lv71526/jlasser/agent_based_simulations/agent_based_COVID_SEIRX/data/school
