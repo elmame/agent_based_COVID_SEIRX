@@ -25,8 +25,6 @@ running_tasks=0              ## initialization
 src=/home/lv71526/jlasser/agent_based_simulations/agent_based_COVID_SEIRX/data/school
 dst=/binfl/lv71526/jlasser/results
 
-SLURM_ARRAY_TASK_ID=0
-
 let m_range_start=$SLURM_ARRAY_TASK_ID*4
 let m_range_end=$m_range_start+3
 
