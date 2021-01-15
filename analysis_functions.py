@@ -418,8 +418,14 @@ def get_ensemble_observables_school(model, run):
 
 
 def compress_pickle(fname, fpath, data):
-    with bz2.BZ2File(join(fpath, fname + '.pbz2'), 'w') as f: 
-        cPickle.dump(data, f)
+    success = False
+    while not success:
+        try:
+            with bz2.BZ2File(join(fpath, fname + '.pbz2'), 'w') as f: 
+                cPickle.dump(data, f)
+        except OSError:
+            time.sleep(0.5)
+            print('re-trying to dump model file...')
     
     
 def decompress_pickle(fname, fpath):
