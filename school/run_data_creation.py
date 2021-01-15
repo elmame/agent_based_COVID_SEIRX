@@ -73,7 +73,12 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
         stype, school['classes'], school['students'])
 
 
-    dst = join(dst, stype)
+    dst = join(join(dst, stype), sname)
+
+    try:
+        os.mkdir(dst)
+    except FileExistsError:
+        pass 
 
     for subdir in ['representative_runs_median', 'representative_runs_best',
                    'representative_runs_worst', 'ensembles']:
