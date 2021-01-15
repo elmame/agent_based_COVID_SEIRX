@@ -21,9 +21,8 @@ stype=primary
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/lv71526/jlasser/agent_based_simulations/agent_based_COVID_SEIRX/data/school
-dst=/global/lv71526/jlasser/results
+dst=/binfl/lv71526/jlasser/results
 
-SLURM_ARRAY_TASK_ID=0
 
 let m_range_start=$SLURM_ARRAY_TASK_ID*4
 let m_range_end=$m_range_start+3
@@ -41,6 +40,7 @@ for m_idx in $(seq $m_range_start $m_range_end)
 		done
 
 		echo "*********************"
+		echo run_data_creation.py $stype $N_runs $s_idx $m_idx $src $dst
 		python run_data_creation.py $stype $N_runs $s_idx $m_idx $src $dst &
 		echo "*********************"
 		sleep 1

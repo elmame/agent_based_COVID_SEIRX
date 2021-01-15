@@ -214,28 +214,28 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
     for stat, path in zip(['median', '0.10', '0.90'], 
                           [spath_median, spath_best, spath_worst]):
 
-        #i = 0
-        #while i < 10 and found[stat] == False:
-        #    try:
-            rep_model = af.get_representative_run(row['infected_agents_{}'\
-                .format(stat)], tmp_path)
-            tm_events = af.get_transmission_chain(\
-                        rep_model, stype, teacher_schedule, student_schedule)
-            state_data = af.get_agent_states(rep_model, tm_events)
+        i = 0
+        while i < 10 and found[stat] == False:
+            try:
+                rep_model = af.get_representative_run(row['infected_agents_{}'\
+                    .format(stat)], tmp_path)
+                tm_events = af.get_transmission_chain(\
+                            rep_model, stype, teacher_schedule, student_schedule)
+                state_data = af.get_agent_states(rep_model, tm_events)
 
-            duration = rep_model.Nstep
-            start_weekday = rep_model.weekday_offset
+                duration = rep_model.Nstep
+                start_weekday = rep_model.weekday_offset
 
-            af.dump_JSON(path, school, ttype, index_case, s_screen_interval, 
-                         t_screen_interval, teacher_mask, student_mask, 
-                         half_classes, ventilation_mod, node_list, 
-                         teacher_schedule, student_schedule, tm_events, 
-                         state_data, start_weekday, duration)
+                af.dump_JSON(path, school, ttype, index_case, s_screen_interval, 
+                             t_screen_interval, teacher_mask, student_mask, 
+                             half_classes, ventilation_mod, node_list, 
+                             teacher_schedule, student_schedule, tm_events, 
+                             state_data, start_weekday, duration)
 
-            found[stat] = True
-            #except (KeyError, IndexError, AttributeError) as e:
-            #    print('{}: {}'.format(e, measure_string))
-            #i += 1
+                found[stat] = True
+            except (KeyError, IndexError, AttributeError) as e:
+                print('{}: {}'.format(e, measure_string))
+            i += 1
 
     # delete the saved runs only if we found a representative run for all three
     # variants
@@ -244,6 +244,8 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
             shutil.rmtree(tmp_path)
         except FileNotFoundError:
             pass
+
+    print('completed {} {}'.format(sname, measure_string))
 
 school_type = sys.argv[1]
 runs = int(sys.argv[2])
