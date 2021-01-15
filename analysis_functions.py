@@ -7,6 +7,7 @@ import pickle
 import bz2
 import _pickle as cPickle
 from os.path import join
+from random import shuffle
 
 import sys
 sys.path.insert(0,'school')
@@ -429,6 +430,7 @@ def decompress_pickle(fname, fpath):
 
 def get_representative_run(N_infected, path):
     filenames = os.listdir(path)
+    shuffle(filenames)
     medians = {int(f.split('_')[1]):int(f.split('_')[3].split('.')[0]) \
                for f in filenames}
     dist = np.inf

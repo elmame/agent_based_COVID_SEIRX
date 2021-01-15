@@ -13,34 +13,6 @@ sys.path.insert(0,'../nursing_home')
 from model_school import SEIRX_school
 import analysis_functions as af
 
-
-
-# screening parameters
-# student and teacher streening intervals (in days)
-s_screen_range = [3, 7]
-t_screen_range = [3, 7]
-# test technologies (and test result turnover times) used in the
-# different scenarios
-test_types = ['same_day_antigen']
-# specifies whether the index case will be introduced via an
-# employee or a resident
-index_cases = ['student', 'teacher']
-# specifies whether teachers wear masks
-student_masks = [True, False]
-teacher_masks = [True, False]
-half_classes = [True, False]
-transmission_risk_ventilation_modifiers = [1, 0.36]
-
-params = [(i, j, k, l, m, n, o, p)\
-              for i in test_types \
-              for j in index_cases \
-              for k in s_screen_range \
-              for l in t_screen_range \
-              for m in student_masks \
-              for n in teacher_masks \
-              for o in half_classes \
-              for p in transmission_risk_ventilation_modifiers]
-
 # agents
 agent_types = {
         'student':{
@@ -89,12 +61,10 @@ def set_multiindex(df, agent_type):
     return df
 
 def sample_prevention_strategies(screen_params, school, agent_types, measures, 
-                model_params, res_path, runs, min_measure_idx, max_measure_idx):
+                model_params, src, dst, runs):
     # maximum number of steps in a single run. A run automatically stops if the 
     # outbreak is contained, i.e. there are no more infected or exposed agents.
     N_steps = 1000 
-
-    screen_params = screen_params[min_measure_idx:max_measure_idx]
     
     ## data I/O
     stype = school['type']
@@ -103,22 +73,19 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
         stype, school['classes'], school['students'])
 
 
+    dst = join(dst, stype)
+
     for subdir in ['representative_runs_median', 'representative_runs_best',
                    'representative_runs_worst', 'ensembles']:
         try:
-            os.mkdir(join(res_path, 'results/{}/{}'\
-                      .format(stype, subdir)))
+            os.mkdir(join(dst, subdir))
         except FileExistsError:
             pass   
 
-    spath_median = join(res_path, join('results/{}/representative_runs_median'\
-                      .format(stype), sname))
-    spath_best = join(res_path, join('results/{}/representative_runs_best'\
-                      .format(stype), sname))
-    spath_worst = join(res_path, join('results/{}/representative_runs_worst'\
-                      .format(stype), sname))
-    spath_ensmbl = join(res_path, join('results/{}/ensembles'\
-                      .format(stype), sname))
+    spath_median = join(dst, join('representative_runs_median', sname))
+    spath_best = join(dst, join('representative_runs_best', sname))
+    spath_worst = join(dst, join('representative_runs_worst', sname))
+    spath_ensmbl = join(dst, join('ensembles', sname))
 
     for path in [spath_median, spath_best, spath_worst, spath_ensmbl]:
         try:
@@ -126,166 +93,167 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
         except FileExistsError:
             pass     
 
-    node_list = pd.read_csv(join(res_path + '/node_lists/{}'.format(stype),\
+    node_list = pd.read_csv(join(src + '/node_lists/{}'.format(stype),\
                                  '{}_node_list.csv'.format(sname)))
 
-    ## scan of all possible parameter combinations of additional prevention measures
-    c = 0
-    for ttype, index_case, s_screen_interval, t_screen_interval, student_mask, \
-                teacher_mask, half_classes, ventilation_mod in screen_params:
+    ttype, index_case, s_screen_interval, t_screen_interval, student_mask, \
+                teacher_mask, half_classes, ventilation_mod = screen_params
+    
+    turnovers = {'same':0, 'one':1, 'two':2, 'three':3}
+    bmap = {True:'T', False:'F'}
+    turnover, _, test = ttype.split('_')
+    turnover = turnovers[turnover]
+    
+    measure_string = '{}_test-{}_turnover-{}_index-{}_tf-{}_sf-{}_tmask-{}'\
+        .format(stype, test, turnover, index_case[0], t_screen_interval,
+                s_screen_interval, bmap[teacher_mask]) +\
+                '_smask-{}_half-{}_vent-{}'\
+        .format(bmap[student_mask], bmap[half_classes], ventilation_mod)
 
-        print('layout {}-{}, measures {}-{}: {} / {}'\
-            .format(min_idx, max_idx, min_measure_idx, max_measure_idx,
-                c, len(screen_params)))
-        c += 1
+    # temporary folder for all runs in the ensemble, will be
+    # deleted after a representative run is picked
+    tmp_path = join(spath_median, measure_string + '_tmp')
+    try:
+        shutil.rmtree(tmp_path)
+    except FileNotFoundError:
+        pass
+    os.mkdir(tmp_path)
+    
+    half = ''
+    if half_classes:
+        half = '_half'
         
-        turnovers = {'same':0, 'one':1, 'two':2, 'three':3}
-        bmap = {True:'T', False:'F'}
-        turnover, _, test = ttype.split('_')
-        turnover = turnovers[turnover]
+    # load the contact network, schedule and node_list corresponding to the school
+    G = nx.readwrite.gpickle.read_gpickle(\
+            join(src + '/networks/{}'.format(stype),\
+            '{}_network{}.bz2'.format(sname, half)))
         
-        measure_string = '{}_test-{}_turnover-{}_index-{}_tf-{}_sf-{}_tmask-{}'\
-            .format(stype, test, turnover, index_case[0], t_screen_interval,
-                    s_screen_interval, bmap[teacher_mask]) +\
-                    '_smask-{}_half-{}_vent-{}'\
-            .format(bmap[student_mask], bmap[half_classes], ventilation_mod)
+    student_schedule = pd.read_csv(\
+            join(src + '/schedules/{}'.format(stype),\
+            '{}_students_schedule{}.csv'.format(sname, half)))
+    student_schedule = set_multiindex(student_schedule, 'student')
+    
+    teacher_schedule = pd.read_csv(\
+            join(src + '/schedules/{}'.format(stype),\
+            '{}_teachers_schedule.csv'.format(sname)))
+    teacher_schedule = set_multiindex(teacher_schedule, 'teacher')
 
-        tmp_path = join(spath_median, measure_string + '_tmp')
-        
-        half = ''
-        if half_classes:
-            half = '_half'
-            
-        # load the contact network, schedule and node_list corresponding to the school
-        G = nx.readwrite.gpickle.read_gpickle(\
-                join(res_path + '/networks/{}'.format(stype),\
-                '{}_network{}.bz2'.format(sname, half)))
-            
-        student_schedule = pd.read_csv(\
-                join(res_path + '/schedules/{}'.format(stype),\
-                '{}_students_schedule{}.csv'.format(sname, half)))
-        student_schedule = set_multiindex(student_schedule, 'student')
-        
-        teacher_schedule = pd.read_csv(\
-                join(res_path + '/schedules/{}'.format(stype),\
-                '{}_teachers_schedule.csv'.format(sname)))
-        teacher_schedule = set_multiindex(teacher_schedule, 'teacher')
+    agent_types['student']['screening_interval'] = s_screen_interval
+    agent_types['teacher']['screening_interval'] = t_screen_interval
+    agent_types['student']['mask'] = student_mask
+    agent_types['teacher']['mask'] = teacher_mask
 
-        agent_types['student']['screening_interval'] = s_screen_interval
-        agent_types['teacher']['screening_interval'] = t_screen_interval
-        agent_types['student']['mask'] = student_mask
-        agent_types['teacher']['mask'] = teacher_mask
+    # results of one ensemble with the same parameters
+    ensemble_results = pd.DataFrame()
+    for r in range(runs):
+        # instantiate model with current scenario settings
+        model = SEIRX_school(G, model_params['verbosity'], 
+          base_transmission_risk = model_params['base_risk'], 
+          testing = measures['testing'],
+          exposure_duration = model_params['exposure_duration'],
+          time_until_symptoms = model_params['time_until_symptoms'],
+          infection_duration = model_params['infection_duration'],
+          quarantine_duration = measures['quarantine_duration'],
+          subclinical_modifier = model_params['subclinical_modifier'], # literature
+          infection_risk_contact_type_weights = \
+                model_params['infection_risk_contact_type_weights'], # calibrated
+          K1_contact_types = measures['K1_contact_types'],
+          diagnostic_test_type = measures['diagnostic_test_type'],
+          preventive_screening_test_type = ttype,
+          follow_up_testing_interval = \
+                measures['follow_up_testing_interval'],
+          liberating_testing = measures['liberating_testing'],
+          index_case = index_case,
+          agent_types = agent_types, 
+          age_transmission_risk_discount = \
+                model_params['age_transmission_discount'],
+          age_symptom_discount = model_params['age_symptom_discount'],
+          mask_filter_efficiency = model_params['mask_filter_efficiency'],
+          transmission_risk_ventilation_modifier = ventilation_mod,
+          seed=r)
 
-        # temporary folder for all runs in the ensemble, will be
-        # deleted after a representative run is picked
-        try:
-            shutil.rmtree(tmp_path)
-        except FileNotFoundError:
-            pass
-        os.mkdir(tmp_path)
+        # run the model, end run if the outbreak is over
+        for i in range(N_steps):
+            model.step()
+            if len([a for a in model.schedule.agents if \
+                (a.exposed == True or a.infectious == True)]) == 0:
+                break
 
-        # results of one ensemble with the same parameters
-        ensemble_results = pd.DataFrame()
-        for r in range(runs):
-            # instantiate model with current scenario settings
-            model = SEIRX_school(G, model_params['verbosity'], 
-              base_transmission_risk = model_params['base_risk'], 
-              testing = measures['testing'],
-              exposure_duration = model_params['exposure_duration'],
-              time_until_symptoms = model_params['time_until_symptoms'],
-              infection_duration = model_params['infection_duration'],
-              quarantine_duration = measures['quarantine_duration'],
-              subclinical_modifier = model_params['subclinical_modifier'], # literature
-              infection_risk_contact_type_weights = \
-                    model_params['infection_risk_contact_type_weights'], # calibrated
-              K1_contact_types = measures['K1_contact_types'],
-              diagnostic_test_type = measures['diagnostic_test_type'],
-              preventive_screening_test_type = ttype,
-              follow_up_testing_interval = \
-                    measures['follow_up_testing_interval'],
-              liberating_testing = measures['liberating_testing'],
-              index_case = index_case,
-              agent_types = agent_types, 
-              age_transmission_risk_discount = \
-                    model_params['age_transmission_discount'],
-              age_symptom_discount = model_params['age_symptom_discount'],
-              mask_filter_efficiency = model_params['mask_filter_efficiency'],
-              transmission_risk_ventilation_modifier = ventilation_mod,
-              seed=r)
+        # collect the statistics of the single run
+        row = af.get_ensemble_observables_school(model, r)
+        row['seed'] = r
+        # add run results to the ensemble results
+        ensemble_results = ensemble_results.append(row,
+            ignore_index=True)
+                
+        # dump the current model to later pick a representative run
+        N_infected = row['infected_agents']
+        fname = 'run_{}_N_{}'.format(r, int(N_infected))
+        af.compress_pickle(fname, tmp_path, model)
 
-            # run the model, end run if the outbreak is over
-            for i in range(N_steps):
-                model.step()
-                if len([a for a in model.schedule.agents if \
-                    (a.exposed == True or a.infectious == True)]) == 0:
-                    break
 
-            # collect the statistics of the single run
-            row = af.get_ensemble_observables_school(model, r)
-            row['seed'] = r
-            # add run results to the ensemble results
-            ensemble_results = ensemble_results.append(row,
-                ignore_index=True)
-            
-            
-            ensemble_results.to_csv(join(spath_ensmbl, measure_string + '.csv'))
-            
-            # dump the current model to later pick a representative run
-            N_infected = row['infected_agents']
-            fname = 'run_{}_N_{}'.format(r, int(N_infected))
-            af.compress_pickle(fname, tmp_path, model)
+    # save the collected ensemble results
+    ensemble_results.to_csv(join(spath_ensmbl, measure_string + '.csv'),
+                index=False)
 
-       # add ensemble statistics to the overall results
-        row = {'test_type':test,
-               'turnover':turnover,
-               'index_case':index_case,
-               'student_screen_interval':s_screen_interval,
-               'teacher_screen_interval':t_screen_interval,
-               'student_mask':student_mask,
-               'teacher_mask':teacher_mask,
-               'half_classes':half_classes,
-               'ventilation_modification':ventilation_mod}
-        
-        ensemble_results = ensemble_results[ensemble_results['infected_agents'] > 0]
-        for col in ensemble_results.columns:
-            row.update(af.get_statistics(ensemble_results, col))
-        
-        # get the a representative model with the same number of infected
-        # as the ensemble median
-        for stat, path in zip(['median', '0.10', '0.90'], 
-                              [spath_median, spath_best, spath_worst]):
-            rep_model = af.get_representative_run(row['infected_agents_{}'.format(stat)],\
-                                tmp_path)
+    # calculate ensemble statistics
+    row = {'test_type':test,
+           'turnover':turnover,
+           'index_case':index_case,
+           'student_screen_interval':s_screen_interval,
+           'teacher_screen_interval':t_screen_interval,
+           'student_mask':student_mask,
+           'teacher_mask':teacher_mask,
+           'half_classes':half_classes,
+           'ventilation_modification':ventilation_mod}
+    
+    ensemble_results = ensemble_results[ensemble_results['infected_agents'] > 0]
+    for col in ensemble_results.columns:
+        row.update(af.get_statistics(ensemble_results, col))
+    
+    # get the a representative model with the same number of infected
+    # as the ensemble median
+    found = {'median':False, '0.10':False, '0.90':False}
+    for stat, path in zip(['median', '0.10', '0.90'], 
+                          [spath_median, spath_best, spath_worst]):
+
+        i = 0
+        while i < 10 and found[stat] == False:
             try:
+                rep_model = af.get_representative_run(row['infected_agents_{}'\
+                    .format(stat)], tmp_path)
                 tm_events = af.get_transmission_chain(\
                             rep_model, stype, teacher_schedule, student_schedule)
-            except (KeyError, IndexError) as e:
-                print(e)
-                return rep_model, teacher_schedule, student_schedule
-            state_data = af.get_agent_states(rep_model, tm_events)
+                state_data = af.get_agent_states(rep_model, tm_events)
 
-            duration = rep_model.Nstep
-            start_weekday = rep_model.weekday_offest
+                duration = rep_model.Nstep
+                start_weekday = rep_model.weekday_offset
 
-            af.dump_JSON(path, school, ttype, index_case, s_screen_interval, 
-                         t_screen_interval, teacher_mask, student_mask, 
-                         half_classes, ventilation_mod, node_list, teacher_schedule,
-                         student_schedule, tm_events, state_data, start_weekday, 
-                         duration)
+                af.dump_JSON(path, school, ttype, index_case, s_screen_interval, 
+                             t_screen_interval, teacher_mask, student_mask, 
+                             half_classes, ventilation_mod, node_list, 
+                             teacher_schedule, student_schedule, tm_events, 
+                             state_data, start_weekday, duration)
+
+                found[stat] = True
+            except (KeyError, IndexError, AttributeError) as e:
+                print('{}: {}'.format(e, measure_string))
+            i += 1
+
+    # delete the saved runs only if we found a representative run for all three
+    # variants
+    if all(found.values()):
         try:
             shutil.rmtree(tmp_path)
         except FileNotFoundError:
             pass
 
-
-
-res_path = '../data/school'
 school_type = sys.argv[1]
 runs = int(sys.argv[2])
-min_idx = int(sys.argv[3])
-max_idx = int(sys.argv[4])
-min_measure_idx = int(sys.argv[5])
-max_measure_idx = int(sys.argv[6])
+s_idx = int(sys.argv[3]) # school configuration index
+m_idx = int(sys.argv[4]) # measure configuration index
+src = sys.argv[5]
+dst = sys.argv[6]
 
 # school layouts
 class_sizes = [10, 15, 20, 25, 30]
@@ -314,20 +282,44 @@ school_configs = [(i, j, k) for i, j, k in zip(schools['school_type'],
                                                schools['N_classes'],
                                                schools['N_students'])]
 
-school_configs = school_configs[min_idx:max_idx]
 
-for school_type, N_classes, class_size in school_configs:
-    school = {'type':school_type, 'classes':N_classes,
-              'students':class_size}
+school_type, N_classes, class_size = school_configs[s_idx]
+school = {'type':school_type, 'classes':N_classes,
+          'students':class_size}
 
-    for d in ['representative_runs_median', 'representative_runs_best',
-              'representative_runs_worst', 'ensembles']:
-        try:
-            os.mkdir(join(join(join(res_path, 'results'), school_type), d))
-        except FileExistsError:
-            pass
+# screening parameters
+# student and teacher streening intervals (in days)
+s_screen_range = [None, 3, 7]
+t_screen_range = [None, 3, 7]
+# test technologies (and test result turnover times) used in the
+# different scenarios
+test_types = ['same_day_antigen']
+# specifies whether the index case will be introduced via an
+# employee or a resident
+index_cases = ['student', 'teacher']
+# specifies whether teachers wear masks
+student_masks = [True, False]
+teacher_masks = [True, False]
+half_classes = [True, False]
+transmission_risk_ventilation_modifiers = [1, 0.36]
 
-    
-    sample_prevention_strategies(params, school, agent_types, measures, 
-        model_params, res_path, runs, min_measure_idx, max_measure_idx)
+screening_params = [(i, j, k, l, m, n, o, p)\
+              for i in test_types \
+              for j in index_cases \
+              for k in s_screen_range \
+              for l in t_screen_range \
+              for m in student_masks \
+              for n in teacher_masks \
+              for o in half_classes \
+              for p in transmission_risk_ventilation_modifiers]
+
+params = screening_params[m_idx]
+
+try:
+    os.mkdir(join(dst, school_type))
+except FileExistsError:
+    pass
+
+sample_prevention_strategies(params, school, agent_types, measures, 
+    model_params, src, dst, runs)
 
