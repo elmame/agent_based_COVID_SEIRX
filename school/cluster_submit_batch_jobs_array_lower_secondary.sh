@@ -5,7 +5,7 @@
 #SBATCH --array=0-71        
 #SBATCH --ntasks-per-core=2
 #SBATCH --ntasks=16          
-#SBATCH --time=04:00:00      
+#SBATCH --time=05:00:00      
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=lasser@csh.ac.at
 
