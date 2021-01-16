@@ -21,7 +21,7 @@ stype=upper_secondary
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/lv71526/jlasser/agent_based_simulations/agent_based_COVID_SEIRX/data/school
-dst=/binfl/lv71526/jlasser/results
+dst=/global/lv71526/jlasser/results
 
 
 let m_range_start=$SLURM_ARRAY_TASK_ID*4
