@@ -107,6 +107,10 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
                 '_smask-{}_half-{}_vent-{}'\
         .format(bmap[student_mask], bmap[half_classes], ventilation_mod)
 
+    if os.path.exists(join(spath_ensmbl, measure_string + '.csv')):
+        print('{} existis!'.format(join(spath_ensmbl, measure_string + '.csv')))
+        return
+
     # temporary folder for all runs in the ensemble, will be
     # deleted after a representative run is picked
     tmp_path = join(spath_median, measure_string + '_tmp')
