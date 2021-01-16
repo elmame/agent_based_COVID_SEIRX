@@ -5,7 +5,7 @@ echo -n "start: "
 date
 
 N_runs=500
-stype=primary             
+stype=upper_secondary             
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/representative_schools
