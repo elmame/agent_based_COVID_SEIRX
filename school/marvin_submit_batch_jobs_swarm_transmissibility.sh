@@ -5,14 +5,15 @@ echo -n "start: "
 date
 
 N_runs=500
-stype=upper_secondary             
+
+trisk=1.5           
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/representative_schools
 dst=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/results_transmissibility
 
 
-for trisk in 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2
+for stype in secondary primary_dc lower_secondary_dc secondary_dc
 	do
 	
 	for m_idx in $(seq 0 287)
