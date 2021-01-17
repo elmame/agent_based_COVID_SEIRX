@@ -6,7 +6,7 @@ date
 
 N_runs=500
 stype=secondary             
-max_tasks=128                 ## number of tasks per node.
+max_tasks=224                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/jlasser/agent_based_COVID_SEIRX/data/school/representative_schools
 dst=/home/jlasser/agent_based_COVID_SEIRX/data/school/results_transmissibility
