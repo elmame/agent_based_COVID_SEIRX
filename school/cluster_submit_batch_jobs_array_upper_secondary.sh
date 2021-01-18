@@ -2,7 +2,7 @@
 #
 #SBATCH -J COVID_SEIRX_data_creation_array_upper_secondary
 #SBATCH -N 1         
-#SBATCH --array=0-71        
+#SBATCH --array=0-35        
 #SBATCH --ntasks-per-core=2
 #SBATCH --ntasks=16          
 #SBATCH --time=06:00:00      
@@ -24,8 +24,8 @@ src=/home/lv71526/jlasser/agent_based_simulations/agent_based_COVID_SEIRX/data/s
 dst=/global/lv71526/jlasser/results
 
 
-let m_range_start=$SLURM_ARRAY_TASK_ID*4
-let m_range_end=$m_range_start+3
+let m_range_start=$SLURM_ARRAY_TASK_ID*8
+let m_range_end=$m_range_start+7
 
 for m_idx in $(seq $m_range_start $m_range_end)
 	do
