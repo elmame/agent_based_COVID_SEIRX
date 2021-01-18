@@ -5,14 +5,14 @@ echo -n "start: "
 date
 
 N_runs=500
-stype=secondary             
-max_tasks=128                 ## number of tasks per node.
+stype=lower_secondary_dc             
+max_tasks=220                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/jlasser/agent_based_COVID_SEIRX/data/school/representative_schools
 dst=/home/jlasser/agent_based_COVID_SEIRX/data/school/results_transmissibility
 
 
-for trisk in 1.5 2.0
+for trisk in 1.5
 	do
 	
 	for m_idx in $(seq 0 287)
