@@ -84,12 +84,13 @@ The simulation consists of a _model_ that stores model parameters, the agent con
 ### Agents
 Similarly to the model, agents have a base-class ```agent_SEIRX``` that inherits from [mesa's](https://mesa.readthedocs.io/en/stable/) ```Agent```. The agent class implements agent states and counters and functions necessary for simulating contacts between agents and advancing states. Different agent types needed in the scenarios inherit from this base class and might implement additional functionality. Currently there are five agent types: resident and employee (nursing home scenario) and teacher, student and family member (school scenario). These agent types are implemented in separate classes which inherit from the agent base-class. 
 
-### testing
+### Testing
 The testing strategy is contained in ```testing_strategy.py```, a class different from the SEIRX base model but is created with parameters passed through the SEIRX constructor. This is to keep parameters and information related to testing and tracing in one place, separate from the infection dynamics model. The testing class also stores information on the sensitivity, specificity and turnover time of a range of tests and can be easily extended to include additional testing technologies.
 
 ### Additional modules
 * The module ```analysis_functions.py``` provides a range of functions to analyse data from model runs.
 * The module ```viz.py``` provides some custom visualization utility to plot infection time-lines and agent states on a network, given a model instance.
+* the module ```school/construct_school_network.py``` provides functionality to construct contact networks for different school types
 
 ## Applications
 ### Nursing homes
@@ -99,7 +100,7 @@ The contact networks for nursing homes are specified through resident relations 
 ### Schools
 Schools implement agent types ```teachers```, ```students``` and ```family_members``` of students, as well as the ```model_school``` (all located in the ```school``` sub-folder).  
 
-The contact networks for schools are generated to reflect common structures in Austrian schools in a [jupyter notebook](https://github.com/JanaLasser/agent_based_COVID_SEIRX/blob/dev/school/construct_school_network.ipynb) provided in this repository. Schools are defined by the number of classes they have, the number of students per class, the number of floors these classes are distributed over, and the school type which determines the age structure of the students in the school. A school will have a number of teachers that corresponds to twice the number of classes (which corresponds to approximately the class/teacher ratio in Austrian schools). Every student will have a number of family members drawn from a distribution of household sizes corresponding to Austrian house holds.
+The contact networks for schools are modeled to reflect common structures in Austrian schools (see the [school-type specific documentation](https://github.com/JanaLasser/agent_based_COVID_SEIRX/blob/master/school/school_type_documentation.ipynb) for details). For this application, we construct three distinct in a [jupyter notebook](https://github.com/JanaLasser/agent_based_COVID_SEIRX/blob/dev/school/construct_school_network.ipynb) provided in this repository. Schools are defined by the number of classes they have, the number of students per class, the number of floors these classes are distributed over, and the school type which determines the age structure of the students in the school. A school will have a number of teachers that corresponds to twice the number of classes (which corresponds to approximately the class/teacher ratio in Austrian schools). Every student will have a number of family members drawn from a distribution of household sizes corresponding to Austrian house holds.
 
 In addition to specifying the agent type, nodes also have node attributes that introduce additional parameters into the transmission dynamics: students are part of a ```class``` (```unit```), which largely defines their contact network. Classes are assigned to ```floors``` and have "neighbouring classes" that are situated on the same floor. A small number of random contacts between neighbouring classes are added to the student interaction network, next to the interactions within each class. Teachers have a schedule that specifies the classes they interact with.  
 
