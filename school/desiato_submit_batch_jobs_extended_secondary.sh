@@ -11,7 +11,7 @@ running_tasks=0              ## initialization
 src=/home/jlasser/agent_based_COVID_SEIRX/data/school/
 dst=/home/jlasser/agent_based_COVID_SEIRX/data/school/results
 
-for s_idx in $(seq 0 19)
+for s_idx in $(seq 0 9)
 	do
 	
 	for m_idx in $(seq 0 287)

@@ -260,7 +260,7 @@ dst = sys.argv[6]
 
 # school layouts
 class_sizes = [10, 15, 20, 25, 30]
-class_numbers = [25, 30, 40, 50]
+class_numbers = [40, 50]
 
 school_types = [school_type]
 
