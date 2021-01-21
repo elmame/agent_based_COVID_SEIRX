@@ -5,14 +5,13 @@ echo -n "start: "
 date
 
 N_runs=500
-stype=lower_secondary_dc             
+stype=secondary             
 max_tasks=220                 ## number of tasks per node.
 running_tasks=0              ## initialization
-src=/home/jlasser/agent_based_COVID_SEIRX/data/school/representative_schools
-dst=/home/jlasser/agent_based_COVID_SEIRX/data/school/results_transmissibility
+src=/home/jlasser/agent_based_COVID_SEIRX/data/school/
+dst=/home/jlasser/agent_based_COVID_SEIRX/data/school/results
 
-
-for trisk in 1.5
+for s_idx in $(seq 0 19)
 	do
 	
 	for m_idx in $(seq 0 287)
@@ -26,8 +25,8 @@ for trisk in 1.5
 		done
 
 		echo "*********************"
-		echo run_data_creation_transmissibility.py $stype $N_runs $m_idx $trisk $src $dst
-		python3 run_data_creation_transmissibility.py $stype $N_runs $m_idx $trisk $src $dst &
+		echo run_data_creation_extended_secondary.py $stype $N_runs $s_idx $m_idx $src $dst
+		python3 run_data_creation_extended_secondary.py $stype $N_runs $s_idx $m_idx $src $dst &
 		echo "*********************"
 		sleep 1
 		
