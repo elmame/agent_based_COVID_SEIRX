@@ -385,6 +385,7 @@ def get_ensemble_observables_school(model, run):
     diagnostic_tests_per_day_per_agent = N_diagnostic_tests / duration / N_school_agents
     preventive_tests_per_day_per_agent = N_preventive_screening_tests / duration / N_school_agents
     tests_per_day_per_agent = (N_diagnostic_tests + N_preventive_screening_tests) / duration / N_school_agents
+    false_negative = model.false_negative
 
     row = {'run':run, 
           'R0':R0,
@@ -413,7 +414,8 @@ def get_ensemble_observables_school(model, run):
           'duration':duration,
           'diagnostic_tests_per_day_per_agent':diagnostic_tests_per_day_per_agent,
           'preventive_tests_per_day_per_agent':preventive_tests_per_day_per_agent,
-          'tests_per_day_per_agent':tests_per_day_per_agent}
+          'tests_per_day_per_agent':tests_per_day_per_agent,
+          'false_negative':false_negative}
 
     return row
 
