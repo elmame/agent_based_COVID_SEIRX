@@ -325,13 +325,6 @@ try:
     os.mkdir(dst)
 except FileExistsError:
     pass
-
-dst = join(dst, '{:1.1f}'.format(trans_risk))
-
-try:
-    os.mkdir(dst)
-except FileExistsError:
-    pass
     
 sample_prevention_strategies(params, school, agent_types, measures, 
     model_params, runs, trans_risk, src, dst)
