@@ -33,6 +33,30 @@ class Testing():
 	         'time_testable':exposure_duration + 6,
 	         'time_until_test_result':0
 	     },
+	     'same_day_antigen_0.4':
+	     {
+	         'sensitivity':0.4,
+	         'specificity':1,
+	         'time_until_testable':exposure_duration + 2,
+	         'time_testable':exposure_duration + 6,
+	         'time_until_test_result':0
+	     },
+	     'same_day_antigen_0.6':
+	     {
+	         'sensitivity':0.6,
+	         'specificity':1,
+	         'time_until_testable':exposure_duration + 2,
+	         'time_testable':exposure_duration + 6,
+	         'time_until_test_result':0
+	     },
+	     'same_day_antigen_0.8':
+	     {
+	         'sensitivity':0.8,
+	         'specificity':1,
+	         'time_until_testable':exposure_duration + 2,
+	         'time_testable':exposure_duration + 6,
+	         'time_until_test_result':0
+	     },
 		'one_day_antigen':
 	     {
 	         'sensitivity':1,
