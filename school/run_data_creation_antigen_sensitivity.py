@@ -72,7 +72,7 @@ def set_multiindex(df, agent_type):
     return df
 
 def sample_prevention_strategies(screen_params, school, agent_types, measures, 
-                model_params, runs, trans_risk, src, dst):
+                model_params, runs, src, dst):
     # maximum number of steps in a single run. A run automatically stops if the 
     # outbreak is contained, i.e. there are no more infected or exposed agents.
     N_steps = 1000 
@@ -114,9 +114,8 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
     measure_string = '{}_test-{}_turnover-{}_index-{}_tf-{}_sf-{}_tmask-{}'\
         .format(stype, test, turnover, index_case[0], t_screen_interval,
                 s_screen_interval, bmap[teacher_mask]) +\
-                '_smask-{}_half-{}_vent-{}_trisk-{}'\
-        .format(bmap[student_mask], bmap[half_classes], ventilation_mod,
-            trans_risk)
+                '_smask-{}_half-{}_vent-{}'\
+        .format(bmap[student_mask], bmap[half_classes], ventilation_mod)
 
     # temporary folder for all runs in the ensemble, will be
     # deleted after a representative run is picked
@@ -153,7 +152,7 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
     for r in range(runs):
         # instantiate model with current scenario settings
         model = SEIRX_school(G, model_params['verbosity'], 
-          base_transmission_risk = model_params['base_risk'] * trans_risk, 
+          base_transmission_risk = model_params['base_risk'], 
           testing = measures['testing'],
           exposure_duration = model_params['exposure_duration'],
           time_until_symptoms = model_params['time_until_symptoms'],
@@ -327,7 +326,7 @@ except FileExistsError:
     pass
     
 sample_prevention_strategies(params, school, agent_types, measures, 
-    model_params, runs, trans_risk, src, dst)
+    model_params, runs, src, dst)
 
 
 
