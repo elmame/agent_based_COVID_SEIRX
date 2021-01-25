@@ -259,9 +259,8 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
 school_type = sys.argv[1]
 runs = int(sys.argv[2])
 m_idx = int(sys.argv[3]) # measure configuration index
-trans_risk = float(sys.argv[4]) # transmissibility modifier
-src = sys.argv[5]
-dst = sys.argv[6]
+src = sys.argv[4]
+dst = sys.argv[5]
 
 # school layouts
 school_characteristics = {
