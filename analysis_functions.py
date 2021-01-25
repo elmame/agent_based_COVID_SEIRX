@@ -464,7 +464,7 @@ def dump_JSON(path, school,
               screen_frequency_teacher, teacher_mask, student_mask, half_classes,
               ventilation_mod, node_list, teacher_schedule, student_schedule, 
               rep_transmission_events, state_data, start_weekday, duration,
-              fname_addition=''):
+              fname_addition='', s_testrate=None, t_testrate=None):
 
     student_schedule = student_schedule.reset_index()
     teacher_schedule = teacher_schedule.reset_index()
@@ -519,9 +519,17 @@ def dump_JSON(path, school,
     fname = join(path, 'test-{}_'.format(ttype) + \
        'turnover-{}_index-{}_tf-{}_'
        .format(turnover, index_case[0], screen_frequency_teacher) +\
-       'sf-{}_tmask-{}_smask-{}_half-{}_vent-{}'\
+       'sf-{}_tmask-{}_smask-{}'\
        .format(screen_frequency_student, bool_dict[teacher_mask],\
-        bool_dict[student_mask], bool_dict[half_classes], ventilation_mod))
+        bool_dict[student_mask]))
+
+    if s_testrate and t_testrate:
+        fname = fname + '_stestrate-{}_ttestrate-{}'\
+            .format(s_testrate, t_testrate)
+
+    fname = fname + '_half-{}_vent-{}'\
+        .format(bool_dict[half_classes], ventilation_mod)
+
     fname = fname + fname_addition + '.txt'
 
     with open(fname,'w')\
