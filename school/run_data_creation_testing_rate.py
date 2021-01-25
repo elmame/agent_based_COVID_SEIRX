@@ -215,8 +215,8 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
            'teacher_screen_interval':t_screen_interval,
            'student_mask':student_mask,
            'teacher_mask':teacher_mask,
-           's_testing_rate':s_test_rate,
-           't_testing_rate':t_test_rate,
+           's_testing_rate':s_testing_rate,
+           't_testing_rate':t_testing_rate,
            'half_classes':half_classes,
            'ventilation_modification':ventilation_mod}
     
@@ -246,7 +246,8 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
                              t_screen_interval, teacher_mask, student_mask, 
                              half_classes, ventilation_mod, node_list, 
                              teacher_schedule, student_schedule, tm_events, 
-                             state_data, start_weekday, duration)
+                             state_data, start_weekday, duration, 
+                             s_testrate=s_testing_rate, t_testrate=t_testing_rate)
 
                 found[stat] = True
             except (KeyError, IndexError, AttributeError) as e:
