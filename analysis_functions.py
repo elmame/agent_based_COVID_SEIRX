@@ -7,6 +7,8 @@ import pickle
 import bz2
 import _pickle as cPickle
 from os.path import join
+from random import shuffle
+import time
 
 import sys
 sys.path.insert(0,'school')
@@ -417,8 +419,16 @@ def get_ensemble_observables_school(model, run):
 
 
 def compress_pickle(fname, fpath, data):
-    with bz2.BZ2File(join(fpath, fname + '.pbz2'), 'w') as f: 
-        cPickle.dump(data, f)
+    success = False
+    while not success:
+        try:
+            with bz2.BZ2File(join(fpath, fname + '.pbz2'), 'w') as f: 
+                cPickle.dump(data, f)
+                success = True
+        except OSError:
+            time.sleep(0.5)
+            print('re-trying to dump model file {} ...'.format(fname))
+    return
     
     
 def decompress_pickle(fname, fpath):
@@ -429,6 +439,7 @@ def decompress_pickle(fname, fpath):
 
 def get_representative_run(N_infected, path):
     filenames = os.listdir(path)
+    shuffle(filenames)
     medians = {int(f.split('_')[1]):int(f.split('_')[3].split('.')[0]) \
                for f in filenames}
     dist = np.inf
