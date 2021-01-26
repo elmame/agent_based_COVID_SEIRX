@@ -385,7 +385,6 @@ def get_ensemble_observables_school(model, run):
     diagnostic_tests_per_day_per_agent = N_diagnostic_tests / duration / N_school_agents
     preventive_tests_per_day_per_agent = N_preventive_screening_tests / duration / N_school_agents
     tests_per_day_per_agent = (N_diagnostic_tests + N_preventive_screening_tests) / duration / N_school_agents
-    false_negative = model.false_negative
 
     row = {'run':run, 
           'R0':R0,
@@ -414,8 +413,7 @@ def get_ensemble_observables_school(model, run):
           'duration':duration,
           'diagnostic_tests_per_day_per_agent':diagnostic_tests_per_day_per_agent,
           'preventive_tests_per_day_per_agent':preventive_tests_per_day_per_agent,
-          'tests_per_day_per_agent':tests_per_day_per_agent,
-          'false_negative':false_negative}
+          'tests_per_day_per_agent':tests_per_day_per_agent}
 
     return row
 
@@ -464,7 +462,7 @@ def dump_JSON(path, school,
               screen_frequency_teacher, teacher_mask, student_mask, half_classes,
               ventilation_mod, node_list, teacher_schedule, student_schedule, 
               rep_transmission_events, state_data, start_weekday, duration,
-              fname_addition='', s_testrate=None, t_testrate=None):
+              fname_addition=''):
 
     student_schedule = student_schedule.reset_index()
     teacher_schedule = teacher_schedule.reset_index()
@@ -519,19 +517,74 @@ def dump_JSON(path, school,
     fname = join(path, 'test-{}_'.format(ttype) + \
        'turnover-{}_index-{}_tf-{}_'
        .format(turnover, index_case[0], screen_frequency_teacher) +\
-       'sf-{}_tmask-{}_smask-{}'\
+       'sf-{}_tmask-{}_smask-{}_half-{}_vent-{}'\
        .format(screen_frequency_student, bool_dict[teacher_mask],\
-        bool_dict[student_mask]))
-
-    if s_testrate and t_testrate:
-        fname = fname + '_stestrate-{}_ttestrate-{}'\
-            .format(s_testrate, t_testrate)
-
-    fname = fname + '_half-{}_vent-{}'\
-        .format(bool_dict[half_classes], ventilation_mod)
-
+        bool_dict[student_mask], bool_dict[half_classes], ventilation_mod))
     fname = fname + fname_addition + '.txt'
 
     with open(fname,'w')\
                    as outfile:
         json.dump(data, outfile)
+
+def get_measures(measure_string):
+    '''
+    Convenience function to get the individual measures given a string (filename)
+    of measures
+    '''
+    agents = {
+        'student':{
+                'screening_interval': None, 
+                'index_probability': 0, 
+                'mask':False},
+        'teacher':{
+                'screening_interval': None, 
+                'index_probability': 0, 
+                'mask':False},
+        'family_member':{
+                'screening_interval': None, 
+                'index_probability': 0, 
+                'mask':False} 
+}
+    
+    turnovers = {0:'same', 1:'one', 2:'two', 3:'three'}
+    bmap = {'T':True, 'F':False}
+    interval_map = {'0':0, '3':3, '7':7, '14':14, 'None':None}
+    index_map = {'s':'student', 't':'teacher'}
+    
+    stype, _ = measure_string.split('_test')
+    rest = measure_string.split(stype + '_')[1]
+
+    ttpype, turnover, index, tf, sf, tmask, smask, haf, vent = \
+        rest.split('_')
+    tmp = [stype, ttpype, turnover, index, tf, sf, tmask, smask, haf, vent]
+    tmp = [m.split('-') for m in tmp]
+
+    screening_params = {}
+    
+    half = False
+    for m in tmp:
+        if len(m) == 1:
+            pass
+        elif m[0] == 'test':
+            ttype = '{}_day_{}'.format(turnovers[int(tmp[2][1])], tmp[1][1])
+            screening_params['preventive_test_type'] = ttype
+        elif m[0] == 'turnover':
+            pass
+        elif m[0] == 'index':
+            screening_params['index_case'] = index_map[m[1]]
+        elif m[0] == 'tf':
+            agents['teacher']['screening_interval'] = interval_map[m[1]]
+        elif m[0] == 'sf':
+            agents['student']['screening_interval'] = interval_map[m[1]]
+        elif m[0] == 'tmask':
+            agents['teacher']['mask'] = bmap[m[1]]    
+        elif m[0] == 'smask':
+            agents['student']['mask'] = bmap[m[1]]
+        elif m[0] == 'half':
+            half = bmap[m[1]]
+        elif m[0] == 'vent':
+            screening_params['transmission_risk_ventilation_modifier'] = float(m[1])
+        else:
+            print('unknown measure type ', m[0])
+    
+    return screening_params, agents, half
