@@ -9,7 +9,7 @@ N_runs=500
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization
 src=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/representative_schools_added_friend_contacts
-dst=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/results_sensitivity_analysis/run_data_creation_added_friendship_contacts
+dst=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/results_sensitivity_analysis/added_friendship_contacts
 
 
 for stype in primary primary_dc lower_secondary lower_secondary_dc upper_secondary secondary
