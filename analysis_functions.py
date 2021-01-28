@@ -452,7 +452,7 @@ def dump_JSON(path, school,
               ventilation_mod, node_list, teacher_schedule, student_schedule, 
               rep_transmission_events, state_data, start_weekday, duration,
               s_testrate=None, t_testrate=None, class_size_reduction=None,
-              fname_addition=''):
+              friendship_contacts=None, fname_addition=''):
 
     student_schedule = student_schedule.reset_index()
     teacher_schedule = teacher_schedule.reset_index()
@@ -516,6 +516,8 @@ def dump_JSON(path, school,
             .format(s_testrate, t_testrate)
     if class_size_reduction != None:
         fname = fname + '_csizered-{}'.format(class_size_reduction)
+    if friendship_contacts != None:
+        fname = fname + '_fcontacts-{}'.format(friendship_contacts)
 
     fname = fname + '_half-{}_vent-{}'\
         .format(bool_dict[half_classes], ventilation_mod)
