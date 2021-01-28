@@ -526,7 +526,8 @@ def dump_JSON(path, school,
                    as outfile:
         json.dump(data, outfile)
 
-def get_measures(measure_string):
+def get_measures(measure_string, test_participation_rate=False,
+                reduced_class_size=False, added_friendship_contacts=False):
     '''
     Convenience function to get the individual measures given a string (filename)
     of measures
@@ -554,11 +555,27 @@ def get_measures(measure_string):
     stype, _ = measure_string.split('_test')
     rest = measure_string.split(stype + '_')[1]
 
-    ttpype, turnover, index, tf, sf, tmask, smask, haf, vent = \
-        rest.split('_')
-    tmp = [stype, ttpype, turnover, index, tf, sf, tmask, smask, haf, vent]
-    tmp = [m.split('-') for m in tmp]
+    if test_participation_rate:
+        ttpype, turnover, index, tf, sf, tmask, smask, haf, \
+            s_test_rate, t_test_rate, vent = rest.split('_')
+        tmp = [stype, ttpype, turnover, index, tf, sf, tmask,
+         smask, haf, s_test_rate, t_test_rate, vent]
+    elif reduced_class_size:
+        ttpype, turnover, index, tf, sf, tmask, smask, haf, \
+            class_size_reduction, vent = rest.split('_')
+        tmp = [stype, ttpype, turnover, index, tf, sf, tmask,
+         smask, haf, class_size_reduction, vent]
+    elif added_friendship_contacts:
+        ttpype, turnover, index, tf, sf, tmask, smask, haf, \
+            friendship_contacts, vent = rest.split('_')
+        tmp = [stype, ttpype, turnover, index, tf, sf,
+            tmask, smask, haf, friendship_contacts, vent]
+    else:
+        ttpype, turnover, index, tf, sf, tmask, smask, haf, vent = \
+            rest.split('_')
+        tmp = [stype, ttpype, turnover, index, tf, sf, tmask, smask, haf, vent]
 
+    tmp = [m.split('-') for m in tmp]
     screening_params = {}
     
     half = False
@@ -584,7 +601,53 @@ def get_measures(measure_string):
             half = bmap[m[1]]
         elif m[0] == 'vent':
             screening_params['transmission_risk_ventilation_modifier'] = float(m[1])
+        elif m[0] == 'csizered':
+            screening_params['class_size_reduction'] = float(m[1])
+        elif m[0] == 'stestrate':
+            screening_params['student_test_rate'] = float(m[1])
+        elif m[0] == 'ttestrate':
+            screening_params['teacher_test_rate'] = float(m[1])
+        elif m[0] == 'fcontacts':
+            screening_params['added_friendship_contacts'] = float(m[1])
         else:
             print('unknown measure type ', m[0])
     
     return screening_params, agents, half
+
+
+def get_data(stype, src_path, test_participation_rate=False,
+            reduced_class_size=False, added_friendship_contacts=False):
+    '''
+    Convenience function to read all ensembles from different measures
+    of a given school type and return one single data frame
+    '''
+    data = pd.DataFrame()
+    stype_path = join(src_path, stype)
+    files = os.listdir(stype_path)
+    for f in files:
+        screening_params, agents, half = get_measures(f.strip('.csv'),
+                test_participation_rate=test_participation_rate,
+                reduced_class_size=reduced_class_size, 
+                added_friendship_contacts=added_friendship_contacts)
+        ensmbl = pd.read_csv(join(stype_path, f))
+        try:
+            ensmbl = ensmbl.drop(columns=['Unnamed: 0'])
+        except KeyError:
+            pass
+        ensmbl['preventive_test_type'] = screening_params['preventive_test_type']
+        ensmbl['index_case'] = screening_params['index_case']
+        ensmbl['transmission_risk_ventilation_modifier'] = \
+            screening_params['transmission_risk_ventilation_modifier']
+        ensmbl['student_mask'] = agents['student']['mask']
+        ensmbl['teacher_mask'] = agents['teacher']['mask']
+        ensmbl['student_screening_interval'] = agents['student']['screening_interval']
+        ensmbl['teacher_screening_interval'] = agents['teacher']['screening_interval']
+        ensmbl['half_classes'] = half
+        ensmbl['class_size_reduction'] = screening_params['class_size_reduction']
+
+        data = pd.concat([data, ensmbl])
+
+    data = data.reset_index(drop=True)
+    data['teacher_screening_interval'] = data['teacher_screening_interval'].replace({None:'never'})
+    data['student_screening_interval'] = data['student_screening_interval'].replace({None:'never'})
+    return data
