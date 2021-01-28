@@ -15,7 +15,7 @@ dst=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/results_s
 for stype in primary primary_dc lower_secondary lower_secondary_dc upper_secondary secondary
 	do
 	
-	for m_idx in $(seq 0 39)
+	for m_idx in $(seq 0 79)
 		do
 		running_tasks=`ps -C python --no-headers | wc -l`
 		
@@ -26,8 +26,8 @@ for stype in primary primary_dc lower_secondary lower_secondary_dc upper_seconda
 		done
 
 		echo "*********************"
-		echo run_data_creation_antigen_sensitivity.py $stype $N_runs $m_idx $src $dst
-		python run_data_creation_antigen_sensitivity.py $stype $N_runs $m_idx $src $dst &
+		echo run_data_creation_testing_rate.py $stype $N_runs $m_idx $src $dst
+		python run_data_creation_testing_rate.py $stype $N_runs $m_idx $src $dst &
 		echo "*********************"
 		sleep 1
 		
