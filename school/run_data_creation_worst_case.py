@@ -219,59 +219,59 @@ def sample_prevention_strategies(screen_params, school, agent_types, measures,
                 index=False)
 
     # calculate ensemble statistics
-    row = {'test_type':test,
-           'turnover':turnover,
-           'index_case':index_case,
-           'student_screen_interval':s_screen_interval,
-           'teacher_screen_interval':t_screen_interval,
-           'student_mask':student_mask,
-           'teacher_mask':teacher_mask,
-           'half_classes':half_classes,
-           'mask_efficiency_exhale':m_efficiency_exhale,
-           'mask_efficiency_inhale':m_efficiency_inhale,
-           'ventilation_modification':ventilation_mod}
+    #row = {'test_type':test,
+    #       'turnover':turnover,
+    #       'index_case':index_case,
+    #       'student_screen_interval':s_screen_interval,
+    #       'teacher_screen_interval':t_screen_interval,
+    #       'student_mask':student_mask,
+    #       'teacher_mask':teacher_mask,
+    #       'half_classes':half_classes,
+    #       'mask_efficiency_exhale':m_efficiency_exhale,
+    #       'mask_efficiency_inhale':m_efficiency_inhale,
+    #       'ventilation_modification':ventilation_mod}
     
-    ensemble_results = ensemble_results[ensemble_results['infected_agents'] > 0]
-    for col in ensemble_results.columns:
-        row.update(af.get_statistics(ensemble_results, col))
+    #ensemble_results = ensemble_results[ensemble_results['infected_agents'] > 0]
+    #for col in ensemble_results.columns:
+    #    row.update(af.get_statistics(ensemble_results, col))
     
     # get the a representative model with the same number of infected
     # as the ensemble median
-    found = {'median':False, '0.10':False, '0.90':False}
-    for stat, path in zip(['median', '0.10', '0.90'], 
-                          [spath_median, spath_best, spath_worst]):
+    #found = {'median':False, '0.10':False, '0.90':False}
+    #for stat, path in zip(['median', '0.10', '0.90'], 
+    #                      [spath_median, spath_best, spath_worst]):
 
-        i = 0
-        while i < 10 and found[stat] == False:
-            try:
-                rep_model = af.get_representative_run(row['infected_agents_{}'\
-                    .format(stat)], tmp_path)
-                tm_events = af.get_transmission_chain(\
-                            rep_model, stype, teacher_schedule, student_schedule)
-                state_data = af.get_agent_states(rep_model, tm_events)
+    #    i = 0
+    #    while i < 10 and found[stat] == False:
+    #        try:
+    #            rep_model = af.get_representative_run(row['infected_agents_{}'\
+    #                .format(stat)], tmp_path)
+    #            tm_events = af.get_transmission_chain(\
+    #                        rep_model, stype, teacher_schedule, student_schedule)
+    #            state_data = af.get_agent_states(rep_model, tm_events)
+    #
+    #            duration = rep_model.Nstep
+    #            start_weekday = rep_model.weekday_offset#
 
-                duration = rep_model.Nstep
-                start_weekday = rep_model.weekday_offset
-
-                af.dump_JSON(path, school, ttype, index_case, s_screen_interval, 
-                             t_screen_interval, teacher_mask, student_mask, 
-                             half_classes, ventilation_mod, node_list, 
-                             teacher_schedule, student_schedule, tm_events, 
-                             state_data, start_weekday, duration,
-                             class_size_reduction=class_size_reduction,
-                             m_efficiency_exhale=m_efficiency_exhale,
-                             m_efficiency_inhale=m_efficiency_inhale,
-                             s_test_rate=s_test_rate, t_test_rate=t_test_rate,
-                             trisk_mod=trisk_mod)
-
-                found[stat] = True
-            except (KeyError, IndexError, AttributeError) as e:
-                print('{}: {}'.format(e, measure_string))
-            i += 1
+    #            af.dump_JSON(path, school, ttype, index_case, s_screen_interval, 
+    #                         t_screen_interval, teacher_mask, student_mask, 
+    #                         half_classes, ventilation_mod, node_list, 
+    #                         teacher_schedule, student_schedule, tm_events, 
+    #                         state_data, start_weekday, duration,
+    #                         class_size_reduction=class_size_reduction,
+    #                         m_efficiency_exhale=m_efficiency_exhale,
+    #                         m_efficiency_inhale=m_efficiency_inhale,
+    #                         s_test_rate=s_test_rate, t_test_rate=t_test_rate,
+    #                         trisk_mod=trisk_mod)
+    #
+    #            found[stat] = True
+    #        except (KeyError, IndexError, AttributeError) as e:
+    #            print('{}: {}'.format(e, measure_string))
+    #        i += 1
 
     # delete the saved runs only if we found a representative run for all three
     # variants
-    if all(found.values()):
+    if Ture: #all(found.values()):
         try:
             shutil.rmtree(tmp_path)
         except FileNotFoundError:
