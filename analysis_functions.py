@@ -462,7 +462,11 @@ def dump_JSON(path, school,
               screen_frequency_teacher, teacher_mask, student_mask, half_classes,
               ventilation_mod, node_list, teacher_schedule, student_schedule, 
               rep_transmission_events, state_data, start_weekday, duration,
-              fname_addition='', friendship_contacts=False):
+              fname_addition='', friendship_contacts=False,
+              class_size_reduction=False,
+              m_efficiency_exhale=False, m_efficiency_inhale=False,
+              s_test_rate=False, t_test_rate=False,
+              trisk_mod = False):
 
     student_schedule = student_schedule.reset_index()
     teacher_schedule = teacher_schedule.reset_index()
@@ -522,8 +526,19 @@ def dump_JSON(path, school,
        .format(screen_frequency_student, bool_dict[teacher_mask],\
         bool_dict[student_mask]))
 
+
     if friendship_contacts:
         fname = fname + '_fcontacts-{}'.format(friendship_contacts)
+    if class_size_reduction:
+        fname = fname + '_csizered-{}'.format(class_size_reduction)
+    if m_efficiency_exhale and m_efficiency_inhale:
+        fname = fname + '_meffinh-{}_meffexh-{}'\
+            .format(m_efficiency_exhale, m_efficiency_inhale)
+    if s_test_rate and t_test_rate:
+        fname = fname + '_stestrate-{}_ttestrate-{}'\
+        .format(s_test_rate, t_test_rate)
+    if trisk_mod:
+        fname = fname + '_trisk-{}'.format(trisk_mod)
 
     fname = fname + '_half-{}_vent-{}'\
         .format(bool_dict[half_classes], ventilation_mod)
