@@ -650,8 +650,12 @@ def get_data(stype, src_path, test_participation_rate=False,
         ensmbl['student_screening_interval'] = agents['student']['screening_interval']
         ensmbl['teacher_screening_interval'] = agents['teacher']['screening_interval']
         ensmbl['half_classes'] = half
-        ensmbl['class_size_reduction'] = screening_params['class_size_reduction']
+        if reduced_class_size:
+            ensmbl['class_size_reduction'] = screening_params['class_size_reduction']
 
+        if test_participation_rate:
+            ensmbl['student_test_rate'] = screening_params['student_test_rate']
+            ensmbl['teacher_test_rate'] = screening_params['teacher_test_rate']
         data = pd.concat([data, ensmbl])
 
     data = data.reset_index(drop=True)
