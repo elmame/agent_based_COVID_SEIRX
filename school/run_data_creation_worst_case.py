@@ -303,43 +303,45 @@ school = {'type':school_type, 'classes':N_classes,
 
 
 # screening parameters
-# (ttype, index_case, s_creen, t_screen, s_mask, t_mask, half, vent)
+# ttype, index_case, s_creen, t_screen, s_mask, t_mask, 
+# class_size_reduction, vent, mask_efficiency_exhale, mask_efficiency_inhale,
+# s_test_rate, t_test_rate, transmission_risk_modifier
 screening_params = [
   # ventilation + masks teachers AND students + reduced class size
-  ('same_day_antigen0.4', 'student', None, None, True, True, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'teacher', None, None, True, True, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'student', None, None, True, True, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
-  ('same_day_antigen0.4', 'teacher', None, None, True, True, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'student', None, None, True, True, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'teacher', None, None, True, True, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'student', None, None, True, True, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'teacher', None, None, True, True, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
   # ventilation + tests teachers AND students 1x / week
-  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
-  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
   # ventilation + tests teachers AND students 2x / week
-  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
-  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
   # ventilation + masks teachers AND students + tests teachers AND students 1x / week
-  ('same_day_antigen0.4', 'student', 7, 7, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'teacher', 7, 7, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'student', 7, 7, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
-  ('same_day_antigen0.4', 'teacher', 7, 7, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'student', 7, 7, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'teacher', 7, 7, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'student', 7, 7, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'teacher', 7, 7, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
   # ventilation + masks teachers AND students + tests teachers AND students 2x / week
-  ('same_day_antigen0.4', 'student', 3, 3, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'teacher', 3, 3, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'student', 3, 3, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
-  ('same_day_antigen0.4', 'teacher', 3, 3, True, True, 0, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'student', 3, 3, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'teacher', 3, 3, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'student', 3, 3, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'teacher', 3, 3, True, True, 0, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
   # ventilation + tests teachers AND students 1x / week + reduced class size
-  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
-  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'student', 7, 7, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'teacher', 7, 7, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
   # ventilation + tests teachers AND students 2x / week + reduced class size
-  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1),
-  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
-  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0.3, 0.3, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1),
+  ('same_day_antigen0.4', 'student', 3, 3, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
+  ('same_day_antigen0.4', 'teacher', 3, 3, False, False, 0.3, 0.8, 0.4, 0.2, 0.5, 0.5, 1.5),
 ]
 
 params = screening_params[m_idx]
