@@ -549,11 +549,13 @@ def dump_JSON(path, school,
         json.dump(data, outfile)
 
 def get_measures(measure_string, test_participation_rate=False,
-                reduced_class_size=False, added_friendship_contacts=False):
+                reduced_class_size=False, added_friendship_contacts=False,
+                reduced_mask_efficiency=False):
     '''
     Convenience function to get the individual measures given a string (filename)
     of measures
     '''
+    #print(measure_string)
     agents = {
         'student':{
                 'screening_interval': None, 
@@ -592,6 +594,11 @@ def get_measures(measure_string, test_participation_rate=False,
             friendship_contacts, vent = rest.split('_')
         tmp = [stype, ttpype, turnover, index, tf, sf,
             tmask, smask, haf, friendship_contacts, vent]
+    elif reduced_mask_efficiency:
+        ttpype, turnover, index, tf, sf, tmask, smask, \
+        meffexh, meffinh, haf, vent = rest.split('_')
+        tmp = [stype, ttpype, turnover, index, tf, sf,
+            tmask, smask, haf, meffexh, meffinh, vent]
     else:
         ttpype, turnover, index, tf, sf, tmask, smask, haf, vent = \
             rest.split('_')
@@ -631,6 +638,10 @@ def get_measures(measure_string, test_participation_rate=False,
             screening_params['teacher_test_rate'] = float(m[1])
         elif m[0] == 'fcontacts':
             screening_params['added_friendship_contacts'] = float(m[1])
+        elif m[0] == 'meffexh':
+            screening_params['mask_efficiency_exhale'] = float(m[1])
+        elif m[0] == 'meffinh':
+            screening_params['mask_efficiency_inhale'] = float(m[1])
         else:
             print('unknown measure type ', m[0])
     
@@ -638,7 +649,8 @@ def get_measures(measure_string, test_participation_rate=False,
 
 
 def get_data(stype, src_path, test_participation_rate=False,
-            reduced_class_size=False, added_friendship_contacts=False):
+            reduced_class_size=False, added_friendship_contacts=False,
+            reduced_mask_efficiency=False):
     '''
     Convenience function to read all ensembles from different measures
     of a given school type and return one single data frame
@@ -650,7 +662,9 @@ def get_data(stype, src_path, test_participation_rate=False,
         screening_params, agents, half = get_measures(f.strip('.csv'),
                 test_participation_rate=test_participation_rate,
                 reduced_class_size=reduced_class_size, 
-                added_friendship_contacts=added_friendship_contacts)
+                added_friendship_contacts=added_friendship_contacts,
+                reduced_mask_efficiency=reduced_mask_efficiency)
+
         ensmbl = pd.read_csv(join(stype_path, f))
         try:
             ensmbl = ensmbl.drop(columns=['Unnamed: 0'])
@@ -671,6 +685,10 @@ def get_data(stype, src_path, test_participation_rate=False,
         if test_participation_rate:
             ensmbl['student_test_rate'] = screening_params['student_test_rate']
             ensmbl['teacher_test_rate'] = screening_params['teacher_test_rate']
+
+        if reduced_mask_efficiency:
+            ensmbl['mask_efficiency_inhale'] = screening_params['mask_efficiency_inhale']
+            ensmbl['mask_efficiency_exhale'] = screening_params['mask_efficiency_exhale']
         data = pd.concat([data, ensmbl])
 
     data = data.reset_index(drop=True)
