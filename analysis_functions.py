@@ -378,8 +378,18 @@ def get_ensemble_observables_school(model, run):
     quarantine_days_student = model.quarantine_counters['student']
     quarantine_days_teacher = model.quarantine_counters['teacher']
     quarantine_days_family_member = model.quarantine_counters['family_member']
-    diagnostic_test_detected_infections = data['diagnostic_test_detected_infections'].max()
-    preventive_test_detected_infections = data['preventive_test_detected_infections'].max()
+    diagnostic_test_detected_infections_student = \
+        data['diagnostic_test_detected_infections_student'].max()
+    diagnostic_test_detected_infections_teacher = \
+        data['diagnostic_test_detected_infections_teacher'].max()
+    diagnostic_test_detected_infections_family_member = \
+        data['diagnostic_test_detected_infections_family_member'].max()
+    preventive_test_detected_infections_student = \
+        data['preventive_test_detected_infections_student'].max()
+    preventive_test_detected_infections_teacher = \
+        data['preventive_test_detected_infections_teacher'].max()
+    preventive_test_detected_infections_family_member = \
+        data['preventive_test_detected_infections_family_member'].max()
     pending_test_infections = data['pending_test_infections'].max()
     undetected_infections = data['undetected_infections'].max()
     predetected_infections = data['predetected_infections'].max()
@@ -409,8 +419,18 @@ def get_ensemble_observables_school(model, run):
           'quarantine_days_student':quarantine_days_student,
           'quarantine_days_teacher':quarantine_days_teacher,
           'quarantine_days_family_member':quarantine_days_family_member,
-          'preventive_test_detected_infections':preventive_test_detected_infections,
-          'diagnostic_test_detected_infections':diagnostic_test_detected_infections,
+          'preventive_test_detected_infections_student':\
+                preventive_test_detected_infections_student,
+          'preventive_test_detected_infections_teacher':\
+                preventive_test_detected_infections_teacher,
+          'preventive_test_detected_infections_family_member':\
+                preventive_test_detected_infections_family_member,
+          'diagnostic_test_detected_infections_student':\
+                diagnostic_test_detected_infections_student,
+          'diagnostic_test_detected_infections_teacher':\
+                diagnostic_test_detected_infections_teacher,
+          'diagnostic_test_detected_infections_family_member':\
+                diagnostic_test_detected_infections_family_member,
           'pending_test_infections':pending_test_infections,
           'undetected_infections':undetected_infections,
           'predetected_infections':predetected_infections,
