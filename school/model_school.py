@@ -276,6 +276,8 @@ class SEIRX_school(SEIRX):
             'screen_family_members_preventive':check_preventive_family_member_screen,
             'N_diagnostic_tests':get_N_diagnostic_tests,
             'N_preventive_screening_tests':get_N_preventive_screening_tests,
+            'diagnostic_test_detected_infections':get_diagnostic_test_detected_infections,
+            'preventive_test_detected_infections':get_preventive_test_detected_infections,
             'undetected_infections':get_undetected_infections,
             'predetected_infections':get_predetected_infections,
             'pending_test_infections':get_pending_test_infections
