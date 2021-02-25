@@ -4,7 +4,7 @@ uptime
 echo -n "start: "
 date
 
-N_runs=500
+N_runs=3000
           
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization

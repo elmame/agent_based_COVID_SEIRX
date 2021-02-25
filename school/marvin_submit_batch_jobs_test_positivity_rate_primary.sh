@@ -4,13 +4,13 @@ uptime
 echo -n "start: "
 date
 
-N_runs=500
+N_runs=3000
           
 max_tasks=32                 ## number of tasks per node.
 running_tasks=0              ## initialization
 
-src=/home/jana/CSH/medical/analysis/nursing_homes/data/school/representative_schools
-dst=/home/jana/CSH/medical/analysis/nursing_homes/data/school/results_test_positive_rate
+src=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/representative_schools
+dst=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/results_test_positive_rate
 
 
 for stype in primary primary_dc
