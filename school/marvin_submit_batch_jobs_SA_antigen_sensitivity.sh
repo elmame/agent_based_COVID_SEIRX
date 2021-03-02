@@ -15,7 +15,7 @@ dst=/home/lasser/agent_based_covid/agent_based_COVID_SEIRX/data/school/results_s
 for stype in primary primary_dc lower_secondary lower_secondary_dc upper_secondary secondary
 	do
 	
-	for m_idx in $(seq 0 59)
+	for m_idx in $(seq 0 89)
 		do
 		running_tasks=`ps -C python --no-headers | wc -l`
 		
