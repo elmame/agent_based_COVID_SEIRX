@@ -49,7 +49,6 @@ head(data4)
 
 
 
-
 names(data)
 
 data1_final <- NULL
@@ -89,6 +88,13 @@ summary(data2)
 summary(data1)
 summary(data3)
 summary(data4)
+
+
+str(unique(data2[,c(4,5)]))
+unique(data1[,c(4,5)])
+unique(data3[,c(4,5)])
+unique(data4[,c(4,5)])
+
 
 data <- data1_final
 str(data)

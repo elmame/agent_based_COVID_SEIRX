@@ -26,7 +26,7 @@ library(svglite)
 # calibration_plots/1_Final_0ed-0.4-0.2 _infected_total.png/pdf
 # calibration_plots/1_Final_0ed-0.4-0.2_infected_groups.png/pdf
 
-name0 <- "0ed-0.4-0.2"
+name0 <- "0.3-0.2"
 
 data1 <- read.table(paste0("nursing_home/Final_", name0, "_Outbreak_sizes.csv"), sep = ",", stringsAsFactors = F, header = T)
 str(data1)
@@ -90,10 +90,14 @@ str(real_outbreak)
 plot <- ggplot(data = data_final, aes(x = i)) +
   geom_line(aes(y = mean_total), size = 2) +
   geom_ribbon(aes(y = mean_total, ymin = mean_total - sd_total, ymax = mean_total + sd_total, fill = "red"), alpha = .2) +
-  xlab("Days") + ylab("Infected total") +  ylim(0, 50) +  xlim(0, 15) +
+  xlab("Days") + ylab("Infected total") +  ylim(0, 30) +  xlim(0, 15) +
   theme(axis.text.x = element_text( hjust = 1, face = "bold", size = 15),
         axis.text.y = element_text(size = 15, face = "bold"),
-        text = element_text(family = "Helvetica", size = 15))  +
+        text = element_text(family = "Helvetica", size = 15),
+        panel.background = element_rect(fill = NA),
+        panel.grid = element_line(colour = "lightgrey", size=0.2),
+        panel.ontop = FALSE,
+        panel.border = element_blank())   +
   guides(fill=guide_legend(title="Standard deviation"))  + labs(title = "Calibration") +
   geom_point(data=real_outbreak, aes(x=t, y=cumulative_total,col = outbreak), size = 2) 
 plot
@@ -152,9 +156,13 @@ plot <- ggplot(data = data_final, aes(x = i)) +
   geom_line(aes(y = mean_employee), size = 2, colour =  "#9999CC") + 
   geom_ribbon(aes(y = mean_employee, ymin =mean_employee_min, ymax = mean_employee + sd_employee), alpha = .2, fill = "blue") +
   xlab("Days") + ylab("Infected") + ylim(0, 25) +  xlim(0, 15) +
-  theme(axis.text.x = element_text( hjust = 1, face = "bold", size = 15), 
+  theme(axis.text.x = element_text( hjust = 1, face = "bold", size = 15),
         axis.text.y = element_text(size = 15, face = "bold"),
-        text = element_text(family = "Helvetica", size = 15))  +
+        text = element_text(family = "Helvetica", size = 15),
+        panel.background = element_rect(fill = NA),
+        panel.grid = element_line(colour = "lightgrey", size=0.2),
+        panel.ontop = FALSE,
+        panel.border = element_blank())  +
   guides(fill=guide_legend(title="Standard deviation"))  + labs(title = "Calibration") +
   guides(fill=guide_legend(title="Standard deviation"))  + labs(title = "Calibration") +
   geom_point(data=real_outbreak, aes(x=t, y=Infected ,col = outbreak, shape = type), size = 2) 
@@ -167,4 +175,3 @@ ggsave(plot,  file = name,  width = 20*1.25, height = 15 *1.25, units = "cm", dp
 
 name <- paste0("calibration_plots/1_Final_", name0, "_infected_groups.pdf")
 ggsave(plot,  file = name,  width = 20*1.25, height = 15 *1.25, units = "cm", dpi=96) 
-

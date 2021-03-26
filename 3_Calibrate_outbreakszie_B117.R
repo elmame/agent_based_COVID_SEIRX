@@ -98,4 +98,3 @@ ggsave(plot,  file = name,  width = 25*1.25, height = 15 *1.25, units = "cm", dp
 
 name <-  "calibration_plots/Calibration_probability_B117.pdf"
 ggsave(plot,  file = name,  width = 25*1.25, height = 15 *1.25, units = "cm", dpi=96)
-
